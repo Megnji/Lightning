@@ -39,9 +39,9 @@ public class MainFrame {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		JPanel infoPanel = new InfoPanel();
+		JPanel infoPanel1 = new InfoPanel();
 		JPanel plotPanel = new PlotPanel();
-		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,plotPanel,infoPanel);
+		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,plotPanel,infoPanel1);
 		
 		JMenuBar menuBar = new MainMenu();
 		
