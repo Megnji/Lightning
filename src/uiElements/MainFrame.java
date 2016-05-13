@@ -1,11 +1,15 @@
 package uiElements;
 
+import java.awt.Dimension;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+
+import functions.LoadPlotData;
 
 public class MainFrame {
 
@@ -32,6 +36,7 @@ public class MainFrame {
 	 */
 	public MainFrame() {
 		initialize();
+		LoadPlotData.loadData("resources/input");
 	}
 
 	/**
@@ -40,8 +45,12 @@ public class MainFrame {
 	private void initialize() {
 		frame = new JFrame();
 		JPanel infoPanel = new InfoPanel();
+		
 		JPanel plotPanel = new PlotPanel();
-		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,plotPanel,infoPanel);
+		plotPanel.setPreferredSize(new Dimension(2000,2000));
+		JScrollPane jsp = new JScrollPane(plotPanel);
+		
+		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jsp,infoPanel);
 		
 		JMenuBar menuBar = new MainMenu();
 		
@@ -50,6 +59,8 @@ public class MainFrame {
 		frame.setBounds(100, 100, 600, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		sp.setResizeWeight(0.5);
+		
+		
 	}
 
 }

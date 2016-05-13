@@ -17,8 +17,8 @@ public class PlotPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private static boolean showGrid = false;
-	private static boolean showOLine = true;
+	public static boolean showGrid = false;
+	public static boolean showOLine = false;
 	
 	private static int _radiusOfDots = 4;
 	private static int _height = 2000;
@@ -44,6 +44,7 @@ public class PlotPanel extends JPanel {
 	}
 	
 	private void drawConnections(Graphics g){
+		g.setColor(Color.red);
 		for (Connection c:_connections){
 			g.drawLine(_list.get(c._pa)._x+_radiusOfDots/2, _list.get(c._pa)._y+_radiusOfDots/2, 
 					_list.get(c._pb)._x+_radiusOfDots/2, _list.get(c._pb)._y+_radiusOfDots/2);
@@ -126,7 +127,9 @@ public class PlotPanel extends JPanel {
 			drawGrid(g);
 		}
 
-		drawLines(g);
+		if (showOLine){
+			drawLines(g);
+		}
 		
 		drawBoxs(g);
 		drawConnections(g);

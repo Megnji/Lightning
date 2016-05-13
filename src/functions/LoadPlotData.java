@@ -3,42 +3,48 @@ package functions;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import bean.Connection;
 import uiElements.PlotPanel;
 
-public class LoadPlotData {
-	
-	public static String[] readFile(String fname) throws IOException{
-		String[] result;
-		int t;
-		BufferedReader br = new BufferedReader(new FileReader(fname));
-		try {
-		    String line = br.readLine();
-		    try {
-		        t = Integer.parseInt(line);
-		    } catch (NumberFormatException e) {
-		        t = 0;
-		    }
-		    result = new String[2];
-		    int count = 0;
-		    while (line != null) {
-		        result[count] = line;
-		        line = br.readLine();
-		        count++;   
-		    }
-		} finally {
-		    br.close();
-		}
-		return result;
-	}
 
-	public static void loadFile(String fname) throws IOException{
-		String[] st = readFile(fname);
-		for (String s:st){
-			int indexA = Character.getNumericValue(s.charAt(1));
-			int indexB = Character.getNumericValue(s.charAt(3));
-			PlotPanel.addConnection(new Connection(indexA,indexB));
+public class LoadPlotData {
+	private static List<Integer> _dots = new ArrayList<Integer>();
+	public static void loadData(String fname){
+		String everything = "";
+		try(BufferedReader br = new BufferedReader(new FileReader(fname))) {
+		    StringBuilder sb = new StringBuilder();
+		    String line = br.readLine();
+
+		    while (line != null) {
+		        sb.append(line);
+		        line = br.readLine();
+		    }
+		    everything = sb.toString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
+		if (!everything.equals("")){
+			String[] temp = everything.split(",|\\(|\\)");
+			for (String i : temp){
+				if (!i.equals("")){
+					_dots.add(Integer.parseInt(i));
+				}
+			}
+			
+			for (int i=0;i<_dots.size();i+=2){
+				Connection c = new Connection(_dots.get(i),_dots.get(i+1));
+				PlotPanel.addConnection(c);
+			}
+			
+			
+		}
+		
+		
+		
 	}
 }
