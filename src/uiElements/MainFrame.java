@@ -51,7 +51,6 @@ public class MainFrame {
 		JScrollPane jsp = new JScrollPane(plotPanel);
 		
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jsp,infoPanel);
-		
 		JMenuBar menuBar = new MainMenu();
 		
 		frame.setJMenuBar(menuBar);
