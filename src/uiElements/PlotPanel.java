@@ -17,8 +17,8 @@ public class PlotPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public static boolean showGrid = false;
-	public static boolean showOLine = false;
+	public static boolean showGrid = true;
+	public static boolean showOLine = true;
 	
 	private static int _radiusOfDots = 4;
 	private static int _height = 2000;
