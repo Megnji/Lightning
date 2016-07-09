@@ -134,4 +134,8 @@ public class PlotPanel extends JPanel {
 		drawBoxs(g);
 		drawConnections(g);
 	}
+	
+	public static void updatePlotPanel(String info){
+		
+	}
 }

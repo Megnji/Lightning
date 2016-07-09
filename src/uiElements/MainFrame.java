@@ -58,8 +58,5 @@ public class MainFrame {
 		frame.setBounds(100, 100, 600, 400);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		sp.setResizeWeight(0.5);
-		
-		
 	}
-
 }
