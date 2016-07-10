@@ -27,6 +27,8 @@ public class MainMenu extends JMenuBar implements ActionListener{
 	public static String graphOrder = "";
 	public static String physicalQ = "";
 	public static String logicalQ = "";
+	public static String embeddings = "";
+	public static String [] embedding;
 	public MainMenu(){
 		super();
 		initialize();
@@ -58,6 +60,7 @@ public class MainMenu extends JMenuBar implements ActionListener{
 	    fileChooser = new JFileChooser();
 		}
 	public void actionPerformed(ActionEvent e){
+		boolean emb = false;
 		if(e.getSource().equals(openItem)){
 			returnVal = fileChooser.showOpenDialog(null);
 			if(returnVal == JFileChooser.APPROVE_OPTION){
@@ -83,8 +86,22 @@ public class MainMenu extends JMenuBar implements ActionListener{
 							physicalQ = words[3].substring(0, 1);
 							InfoPanel.addPhysicalQ();
 						}
+						if (currentLine.contains("embedding"))
+							emb = true;
+						if (currentLine.contains("Physical"))
+							emb = false;
+						if (emb)
+							embeddings = embeddings + currentLine;
+						
+						
 					}
-					
+			
+					embedding = embeddings.split("]");
+					embedding[0] = embedding[0].substring(17,embedding[0].length());
+					for (int i=1;i<embedding.length-2;i++){
+						embedding[i] = embedding[i].substring(3, embedding[i].length());
+					}
+					PlotPanel.updatePlotPanel("gg");
 				}
 				catch(Exception error){
 					error.printStackTrace();
