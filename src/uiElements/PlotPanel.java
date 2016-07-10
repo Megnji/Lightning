@@ -135,9 +135,8 @@ public class PlotPanel extends JPanel {
 		drawConnections(g);
 	}
 	
-	public static void updatePlotPanel(String info){
-		System.out.println(info);
-		for (int i = 0; i<MainMenu.embedding.length;i++)
-			System.out.println(MainMenu.embedding[i]);
+	public static void updatePlotPanel(String[] info){
+		for (int i = 0;i<info.length;i++)
+			System.out.println(info[i]);
 	}
 }

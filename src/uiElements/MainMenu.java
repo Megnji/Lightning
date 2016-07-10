@@ -101,7 +101,7 @@ public class MainMenu extends JMenuBar implements ActionListener{
 					for (int i=1;i<embedding.length-2;i++){
 						embedding[i] = embedding[i].substring(3, embedding[i].length());
 					}
-					PlotPanel.updatePlotPanel("gg");
+					PlotPanel.updatePlotPanel(embedding);
 				}
 				catch(Exception error){
 					error.printStackTrace();
