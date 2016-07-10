@@ -29,7 +29,7 @@ public class LoadPlotData {
 		}
 		
 		if (!everything.equals("")){
-			String[] temp = everything.split(",|\\(|\\)");
+			String[] temp = everything.split(",|\\(|\\)|\\s+");
 			for (String i : temp){
 				if (!i.equals("")){
 					_dots.add(Integer.parseInt(i));

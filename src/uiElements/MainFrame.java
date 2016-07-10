@@ -36,7 +36,7 @@ public class MainFrame {
 	 */
 	public MainFrame() {
 		initialize();
-		LoadPlotData.loadData("resources/input");
+		LoadPlotData.loadData("resources/host");
 	}
 
 	/**
