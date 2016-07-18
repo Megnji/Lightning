@@ -21,8 +21,8 @@ public class PlotPanel extends JPanel {
 	public static boolean showOLine = false;
 	
 	private static int _radiusOfDots = 4;
-	private static int _height = 2000;
-	private static int _width = 2000;
+	private static int _height = 800;
+	private static int _width = 800;
 	private static ArrayList<PointBean> _list = new ArrayList<PointBean>();
 	private static ArrayList<Connection> _connections = new ArrayList<Connection>();
 	private static int _index = 0;
