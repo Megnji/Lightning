@@ -9,6 +9,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import bean.Connection;
+import bean.Connection.ConnectionType;
 import bean.PointBean;
 
 public class PlotPanel extends JPanel {
@@ -37,15 +38,34 @@ public class PlotPanel extends JPanel {
 	}
 	
 	public static void addConnection(Connection c){
-		if (!_connections.contains(c)){
-			_connections.add(c);
+		for (Connection cp:_connections){
+			if ((c._pa == cp._pa && c._pb == cp._pb) || (c._pb == cp._pa && c._pa == cp._pb)){
+				cp._type = c._type;
+				cp._weight = c._weight;
+				return;
+			}
 		}
-		
+		_connections.add(c);
+	}
+	
+	public static boolean connectionExist(Connection c){
+		for (Connection cp:_connections){
+			if ((c._pa == cp._pa && c._pb == cp._pb) || (c._pb == cp._pa && c._pa == cp._pb)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private void drawConnections(Graphics g){
-		g.setColor(Color.gray);
 		for (Connection c:_connections){
+			if (c._type == ConnectionType.host){
+				g.setColor(Color.gray);
+			}else if(c._type == ConnectionType.embedding){
+				g.setColor(Color.red);
+			}else {
+				g.setColor(Color.blue);
+			}
 			g.drawLine(_list.get(c._pa)._x+_radiusOfDots/2, _list.get(c._pa)._y+_radiusOfDots/2, 
 					_list.get(c._pb)._x+_radiusOfDots/2, _list.get(c._pb)._y+_radiusOfDots/2);
 		}
@@ -133,10 +153,5 @@ public class PlotPanel extends JPanel {
 		
 		drawBoxs(g);
 		drawConnections(g);
-	}
-	
-	public static void updatePlotPanel(String[] info){
-		for (int i = 0;i<info.length;i++)
-			System.out.println(info[i]);
 	}
 }

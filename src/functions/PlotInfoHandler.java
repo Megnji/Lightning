@@ -1,46 +1,87 @@
 package functions;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import bean.Connection;
+import bean.Connection.ConnectionType;
 import uiElements.PlotPanel;
 
+public class PlotInfoHandler {
 
-public class LoadPlotData {
-	private static List<Integer> _dots = new ArrayList<Integer>();
-	public static void loadData(String fname){
-		String everything = "";
-		try(BufferedReader br = new BufferedReader(new FileReader(fname))) {
-		    StringBuilder sb = new StringBuilder();
-		    String line = br.readLine();
-
-		    while (line != null) {
-		        sb.append(line);
-		        line = br.readLine();
-		    }
-		    everything = sb.toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public static void updateConnection(String info){
+		String[] strs = info.split("\\{|\\}");
+		String[] couplers = strs[1].split(":|\\(|\\)|,|\\s+");
+		for (int i=0; i< couplers.length; i+=3){
+			//
 		}
-		if (!everything.equals("")){
-			String[] temp = everything.split(",|\\(|\\)|\\s+");
-			for (String i : temp){
-				if (!i.equals("")){
-					_dots.add(Integer.parseInt(i));
+		int numOfUnit = 0;
+		int maxLength = 0;
+		String[] units = strs[2].split("\\]|\\[");
+		String[][] holder = new String[units.length][];
+		
+		for (String unit:units){
+			if (unit.length() > 0){
+				if (Character.isDigit(unit.charAt(0))){
+					holder[numOfUnit] = unit.split(",|\\s+");
+					if (holder[numOfUnit].length > maxLength){
+						maxLength = holder[numOfUnit].length;
+					}
+					numOfUnit++;
 				}
 			}
-			
-			for (int i=0;i<_dots.size();i+=2){
-				Connection c = new Connection(_dots.get(i),_dots.get(i+1));
-				PlotPanel.addConnection(c);
-			}						
-		}		
+
+		}
 		
+		int[][] numHolder = new int[numOfUnit][maxLength];
+		for (int i=0; i< units.length; i++){
+			
+			if (holder[i] != null){
+				int index= 0;
+				for (String str: holder[i]){
+					if (str != null && !str.equals("")){
+						numHolder[i][index] = Integer.parseInt(str);
+						index ++ ;
+					}
+				}
+				for (int j=index; j<maxLength; j++){
+					numHolder[i][j] = -1;
+				}
+			}
+
+		}
+		
+		for (int i=0; i<numOfUnit; i++){
+			randomConnection(numHolder[i]);
+		}
+		
+	}
+	
+	private static void randomConnection(int[] dots){
+		ArrayList<Integer> connected = new ArrayList<Integer>();
+		boolean firstTimeConnect = false;
+		for (int i=0; i< dots.length ; i++){
+				for (int j=0; j< dots.length; j++){
+					if (!firstTimeConnect || connected.contains(dots[i]) || connected.contains(dots[j])){
+						Connection c = new Connection(dots[i],dots[j],ConnectionType.embedding);
+						if (PlotPanel.connectionExist(c)){
+							if (!connected.contains(dots[i])){
+								connected.add(dots[i]);
+							}
+							if (!connected.contains(dots[j])){
+								connected.add(dots[j]);
+							}
+					   
+							PlotPanel.addConnection(c);
+							firstTimeConnect = true;
+							System.out.println(dots[i] + " " + dots[j]);
+							break;
+						}
+					}	
+				}
+		}
+	}
+	
+	public static void main(String[] args){
 		String str = "('Q=', {(9, 26): -20, (11, 11): 80, "
 				+ "(12, 12): 30, (7, 25): -40, (18, 19): 40, (0, 10): -20, (1, 11): -40, (19, 19): 80, (8, 24): "
 				+ "-20, (6, 7): 40, (5, 5): -25, (4, 19): -40, (5, 18): -20, (6, 25): -40, (1, 1): -25, (20, 20): 30, "
@@ -64,6 +105,6 @@ public class LoadPlotData {
 				+ "[241, 246, 254], [244, 252], [435, 436], [439, 447], [503, 511], [506, 508], [490, 495], [491, 493], [473, 479], "
 				+ "[474, 477]])";
 		
-		PlotInfoHandler.updateConnection(str);
+		updateConnection(str);
 	}
 }

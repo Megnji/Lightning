@@ -11,6 +11,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import functions.PlotInfoHandler;
+
 public class MainMenu extends JMenuBar implements ActionListener{
 	
 	/**
@@ -86,7 +88,7 @@ public class MainMenu extends JMenuBar implements ActionListener{
 							physicalQ = words[3].substring(0, 1);
 							InfoPanel.addPhysicalQ();
 						}
-						if (currentLine.contains("embedding"))
+						if (currentLine.contains("Q="))
 							emb = true;
 						if (currentLine.contains("Physical"))
 							emb = false;
@@ -96,12 +98,7 @@ public class MainMenu extends JMenuBar implements ActionListener{
 						
 					}
 			
-					embedding = embeddings.split("]");
-					embedding[0] = embedding[0].substring(17,embedding[0].length());
-					for (int i=1;i<embedding.length-2;i++){
-						embedding[i] = embedding[i].substring(3, embedding[i].length());
-					}
-					PlotPanel.updatePlotPanel(embedding);
+					PlotInfoHandler.updateConnection(embeddings);
 				}
 				catch(Exception error){
 					error.printStackTrace();
