@@ -21,6 +21,8 @@ public class PlotPanel extends JPanel {
 	public static boolean showGrid = false;
 	public static boolean showOLine = false;
 	
+	public boolean zoomin = false;
+	
 	private static int _radiusOfDots = 4;
 	private static int _height = 800;
 	private static int _width = 800;
@@ -149,6 +151,14 @@ public class PlotPanel extends JPanel {
 
 		if (showOLine){
 			drawLines(g);
+		}
+		
+		if (zoomin){
+			Graphics2D g2 = (Graphics2D) g;
+			int w = this.getWidth();
+			int h = this.getHeight();
+			int scale = 2;
+			g2.scale(scale, scale);
 		}
 		
 		drawBoxs(g);

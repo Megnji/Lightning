@@ -2,6 +2,7 @@ package uiElements;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -9,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
+import actions.PlotPanelActionListener;
 import functions.LoadPlotData;
 
 public class MainFrame {
@@ -46,7 +48,9 @@ public class MainFrame {
 		frame = new JFrame();
 		JPanel infoPanel = new InfoPanel();
 		
-		JPanel plotPanel = new PlotPanel();
+		PlotPanel plotPanel = new PlotPanel();
+		MouseListener ml = new PlotPanelActionListener(plotPanel);
+		plotPanel.addMouseListener(ml);
 		plotPanel.setPreferredSize(new Dimension(2000,2000));
 		JScrollPane jsp = new JScrollPane(plotPanel);
 		
