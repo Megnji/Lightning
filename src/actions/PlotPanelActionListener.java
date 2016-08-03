@@ -1,5 +1,6 @@
 package actions;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -22,6 +23,9 @@ public class PlotPanelActionListener implements MouseListener{
 				_panel.zoomin = true;
 			}
 			_panel.repaint();
+		}else{
+			Point p = e.getPoint();
+			System.out.println(PlotPanel.getClickInfo(p));
 		}
 		
 	}

@@ -3,6 +3,7 @@ package uiElements;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -57,6 +58,18 @@ public class PlotPanel extends JPanel {
 			}
 		}
 		return false;
+	}
+	
+	public static String getClickInfo(Point p){
+		String result = "";
+		for (PointBean pb : _list){
+			if (Math.abs(pb._x - p.x) < 12 && Math.abs(pb._y- p.y) < 12){
+				result = "Point clicked: "+pb._index+" "+p.x+ " "+p.y;
+				return result;
+			}
+		}
+		
+		return result;
 	}
 	
 	private void drawConnections(Graphics g){
@@ -155,8 +168,6 @@ public class PlotPanel extends JPanel {
 		
 		if (zoomin){
 			Graphics2D g2 = (Graphics2D) g;
-			int w = this.getWidth();
-			int h = this.getHeight();
 			int scale = 2;
 			g2.scale(scale, scale);
 		}
