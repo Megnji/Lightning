@@ -7,11 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bean.Connection;
+import bean.PointBean;
 import uiElements.PlotPanel;
 
 
 public class LoadPlotData {
 	private static List<Integer> _dots = new ArrayList<Integer>();
+	private static ArrayList<Integer> _dotList = new ArrayList<Integer>();
+	private static ArrayList<PointBean> _list = new ArrayList<PointBean>();
+	private static int _maxIndex = 0;
 	public static void loadData(String fname){
 		String everything = "";
 		try(BufferedReader br = new BufferedReader(new FileReader(fname))) {
@@ -31,9 +35,26 @@ public class LoadPlotData {
 			String[] temp = everything.split(",|\\(|\\)|\\s+");
 			for (String i : temp){
 				if (!i.equals("")){
-					_dots.add(Integer.parseInt(i));
+					int index= Integer.parseInt(i);
+					_dots.add(index);
+					PointBean p = new PointBean(index);
+					if (!_list.contains(p)){
+						_list.add(p);
+					}
+					if (!_dotList.contains(index)){
+						_dotList.add(index);
+					}
+					if (index > _maxIndex){
+						_maxIndex= index;
+					}
 				}
 			}
+			
+			for (int i: _dotList){
+				System.out.print(i+ " ");
+			}
+			
+			PlotPanel.setDotList(_dotList,_maxIndex);
 			
 			for (int i=0;i<_dots.size();i+=2){
 				Connection c = new Connection(_dots.get(i),_dots.get(i+1));

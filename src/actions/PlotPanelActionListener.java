@@ -16,14 +16,17 @@ public class PlotPanelActionListener implements MouseListener{
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		System.out.println(e.getClickCount());
 		if (e.getClickCount() == 2){
-			if (_panel.zoomin == true){
-				_panel.zoomin = false;
+			if (PlotPanel.zoomin == true){
+				PlotPanel.zoomin = false;
 			}else{
-				_panel.zoomin = true;
+				PlotPanel.zoomin = true;
 			}
+			
 			_panel.repaint();
-		}else{
+			PlotPanel.changed = true;
+		}else if (e.getClickCount() == 1){
 			Point p = e.getPoint();
 			System.out.println(PlotPanel.getClickInfo(p));
 		}

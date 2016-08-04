@@ -11,6 +11,12 @@ public class PointBean {
 	public int _y;
 	public int _index;
 	
+	public PointBean(int index){
+		_index = index;
+		_x = -10;
+		_y = -10;
+	}
+	
 	public PointBean(int index,int x,int y){
 		_index = index;
 		_x = x;

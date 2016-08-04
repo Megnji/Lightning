@@ -22,12 +22,14 @@ public class PlotPanel extends JPanel {
 	public static boolean showGrid = false;
 	public static boolean showOLine = false;
 	
-	public boolean zoomin = false;
-	
+	public static boolean zoomin = false;
+	public static boolean changed = false;
 	private static int _radiusOfDots = 4;
 	private static int _height = 800;
 	private static int _width = 800;
 	private static ArrayList<PointBean> _list = new ArrayList<PointBean>();
+	private static ArrayList<Integer> _listOfIndex = new ArrayList<Integer>();
+	private static int _maxIndex= 0;
 	private static ArrayList<Connection> _connections = new ArrayList<Connection>();
 	private static int _index = 0;
 	
@@ -63,13 +65,37 @@ public class PlotPanel extends JPanel {
 	public static String getClickInfo(Point p){
 		String result = "";
 		for (PointBean pb : _list){
-			if (Math.abs(pb._x - p.x) < 12 && Math.abs(pb._y- p.y) < 12){
-				result = "Point clicked: "+pb._index+" "+p.x+ " "+p.y;
-				return result;
-			}
+				if (Math.abs(pb._x - p.x) < 12 && Math.abs(pb._y- p.y) < 12){
+					result = "Point clicked: "+pb._index+" "+pb._x+ " "+pb._y;
+					result = result+ "\n" + _list.size();
+					return result;
+				}
+
 		}
 		
-		return result;
+		for (Connection c: _connections){
+			PointBean pa = _list.get(c._pa);
+			PointBean pb = _list.get(c._pb);
+			
+			if (pa._x == pb._x && pa._y<pb._y){ //Vertical line && pa at the top
+				if (Math.abs(pa._x - p.x) < 12 && p.y > pa._y && p.y < pb._y){
+					return "Line clicked:" +pa._index + " to " + pb._index;
+				}
+			}else if (pa._x == pb._x && pa._y>pb._y){ //Vertical line && pb at the top
+				if (Math.abs(pa._x - p.x) < 12 && p.y <pa._y && p.y > pb._y){
+					return "Line clicked:" +pa._index + " to " + pb._index;
+				}
+			}else if (pa._y == pb._y && pa._x < pb._x){ //Horizontal line && pa at the left
+				if (Math.abs(pa._y - p.y) < 12 && p.x >pa._x && p.x < pb._x){
+					return "Line clicked:" +pa._index + " to " + pb._index;
+				}
+			}else if (pa._y == pb._y && pa._x > pb._x){ //Horizontal line && pb at the left
+				if (Math.abs(pa._y - p.y) < 12 && p.x < pa._x && p.x > pb._x){
+					return "Line clicked:" +pa._index + " to " + pb._index;
+				}
+			}
+		}
+		return "Hahahahahah";
 	}
 	
 	private void drawConnections(Graphics g){
@@ -103,8 +129,9 @@ public class PlotPanel extends JPanel {
 	}
 	
 	private void drawBoxs(Graphics g){
-		for (int i=0; i<_width; i+=100){
-			for (int j=0; j<_height; j+=100){
+		int size = (int)Math.ceil(Math.sqrt(_maxIndex / 8));
+		for (int i=0; i<size * 100; i+=100){
+			for (int j=0; j<size * 100; j+=100){
 				drawBox(g,i,j);
 				
 			}
@@ -148,10 +175,36 @@ public class PlotPanel extends JPanel {
 	}
 	
 	private void drawPoint(Graphics g,int x, int y){
-		g.fillOval(x, y, _radiusOfDots, _radiusOfDots);
+		if (_listOfIndex.contains(_index)){
+			g.fillOval(x, y, _radiusOfDots, _radiusOfDots);
+			PointBean point = new PointBean(_index,x,y);
+			_list.add(_index, point);
+		}else{
+			PointBean point = new PointBean(_index,0,0);
+			_list.add(_index, point);
+		}
 		
-		_list.add(new PointBean(_index,x,y));
 		_index++;
+	}
+	
+	public void scale(){
+		
+		for (PointBean p : _list){
+			if (zoomin){
+				p._x = p._x *2;
+				p._y = p._y *2;
+			}else{
+				p._x = p._x /2;
+				p._y = p._y /2;
+			}
+
+		}
+		changed = false;
+	}
+	
+	public static void setDotList(ArrayList<Integer> l, int maxIndex){
+		_listOfIndex = l;
+		_maxIndex = maxIndex;
 	}
 	
 	@Override
@@ -170,9 +223,16 @@ public class PlotPanel extends JPanel {
 			Graphics2D g2 = (Graphics2D) g;
 			int scale = 2;
 			g2.scale(scale, scale);
+			
 		}
-		
+
+		_index = 0;
+		_list.clear();
 		drawBoxs(g);
+		
 		drawConnections(g);
+		if (changed){
+			scale();
+		}
 	}
 }

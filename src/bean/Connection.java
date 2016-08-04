@@ -4,6 +4,7 @@ public class Connection {
 
 	//index of point a
 	public int _pa;
+	
 	//index of point b
 	public int _pb;
 	
