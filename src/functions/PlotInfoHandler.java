@@ -73,7 +73,7 @@ public class PlotInfoHandler {
 					   
 							PlotPanel.addConnection(c);
 							firstTimeConnect = true;
-							System.out.println(dots[i] + " " + dots[j]);
+							//System.out.println(dots[i] + " " + dots[j]);
 							break;
 						}
 					}	

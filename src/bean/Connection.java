@@ -39,4 +39,11 @@ public class Connection {
 		_type = type;
 		_weight = weight;
 	}
+	public static boolean sameAs(Connection a, Connection b){
+		if (a._pa == b._pa && a._pb == b._pb)
+			return true;
+		else if (a._pa == b._pb && a._pb == b._pa)
+			return true;
+		else return false;
+	}
 }
