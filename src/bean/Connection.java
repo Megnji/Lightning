@@ -8,6 +8,7 @@ public class Connection {
 	//index of point b
 	public int _pb;
 	
+	public int _indexGroup = -1 ;
 	//type of connection
 	public enum ConnectionType{host,embedding,Q};
 	public ConnectionType _type = ConnectionType.host;
@@ -23,6 +24,7 @@ public class Connection {
 		_type = type;
 	}
 	
+	
 	public Connection(int pa,int pb, Double weight){
 		this(pa,pb);
 		_weight = weight;
@@ -34,9 +36,9 @@ public class Connection {
 		_weight = weight;
 	}
 	
-	public Connection(int pa,int pb, ConnectionType type, int weight){
+	public Connection(int pa,int pb, ConnectionType type, int groupIndex){
 		this(pa,pb);
 		_type = type;
-		_weight = weight;
+		_indexGroup = groupIndex;
 	}
 }

@@ -34,6 +34,7 @@ public class LoadPlotData {
 		if (!everything.equals("")){
 			String[] temp = everything.split(",|\\(|\\)|\\s+");
 			for (String i : temp){
+				
 				if (!i.equals("")){
 					int index= Integer.parseInt(i);
 					_dots.add(index);

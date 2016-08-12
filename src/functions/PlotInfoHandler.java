@@ -51,18 +51,18 @@ public class PlotInfoHandler {
 		}
 		
 		for (int i=0; i<numOfUnit; i++){
-			randomConnection(numHolder[i]);
+			randomConnection(numHolder[i],i);
 		}
 		
 	}
 	
-	private static void randomConnection(int[] dots){
+	private static void randomConnection(int[] dots,int index){
 		ArrayList<Integer> connected = new ArrayList<Integer>();
 		boolean firstTimeConnect = false;
 		for (int i=0; i< dots.length ; i++){
 				for (int j=0; j< dots.length; j++){
 					if (!firstTimeConnect || connected.contains(dots[i]) || connected.contains(dots[j])){
-						Connection c = new Connection(dots[i],dots[j],ConnectionType.embedding);
+						Connection c = new Connection(dots[i],dots[j],ConnectionType.embedding,index);
 						if (PlotPanel.connectionExist(c)){
 							if (!connected.contains(dots[i])){
 								connected.add(dots[i]);
