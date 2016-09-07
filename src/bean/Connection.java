@@ -11,6 +11,7 @@ public class Connection {
 	public int _indexGroup = -1 ;
 	//type of connection
 	public enum ConnectionType{host,embedding,Q};
+	public boolean isClicked = false;
 	public ConnectionType _type = ConnectionType.host;
 	
 	public double _weight = 0;
@@ -40,5 +41,12 @@ public class Connection {
 		this(pa,pb);
 		_type = type;
 		_indexGroup = groupIndex;
+	}
+	public static boolean sameAs(Connection a, Connection b){
+		if (a._pa == b._pa && a._pb == b._pb)
+			return true;
+		else if (a._pa == b._pb && a._pb == b._pa)
+			return true;
+		else return false;
 	}
 }

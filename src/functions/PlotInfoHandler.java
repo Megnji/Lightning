@@ -1,6 +1,9 @@
 package functions;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
+import javax.swing.SwingWorker;
 
 import bean.Connection;
 import bean.Connection.ConnectionType;
@@ -49,11 +52,71 @@ public class PlotInfoHandler {
 			}
 
 		}
+		final int num = numOfUnit;
 		
-		for (int i=0; i<numOfUnit; i++){
-			randomConnection(numHolder[i],i);
+		SwingWorker<ArrayList<Connection>, Void> worker = new SwingWorker<ArrayList<Connection>, Void>() {
+		    @Override
+		    public ArrayList<Connection> doInBackground() {
+		    	ArrayList<Connection> list = new ArrayList<Connection>();
+		        Connection c = new Connection(0,0);
+		        ArrayList<Integer> connected = new ArrayList<Integer>();
+				for (int i=0; i<num; i++){
+					randomConnection(numHolder[i],i);
+					if (i < num && !connected.contains(i)){
+						int[] result = connectTwoUnit(numHolder[i],numHolder,i,num);
+						if (result[0] != -1){
+							Connection temp = new Connection(result[1],result[2],ConnectionType.Q);
+							list.add(temp);
+							connected.add(i);
+							connected.add(result[0]);
+						}
+					}
+				}
+		        return list;
+		    }
+
+		    @Override
+		    public void done() {
+		    	ArrayList<Connection> list;
+				try {
+					list = (ArrayList<Connection>)this.get();
+					for (Connection c: list){
+						PlotPanel.addConnection(c);
+					}
+					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
+		    }
+		};
+
+		worker.execute();
+	}
+	
+	private static int[] connectTwoUnit(int[] set1, int[][] sets, int index, int num){
+		int[] result = new int[3];
+		for (int i=0; i<set1.length; i++){
+			for (int j=0; j<num; j++){
+				if (j != index){
+					for (int k=0; k<sets[j].length; k++){
+						Connection c = new Connection(set1[i],sets[j][k]);
+						if (PlotPanel.connectionExist(c)){
+							result[0] = j;
+							result[1] = c._pa;
+							result[2] = c._pb;
+							return result;
+						}
+					}
+				}
+			}
 		}
-		
+		result[0] = -1;
+		return result;
 	}
 	
 	private static void randomConnection(int[] dots,int index){
@@ -73,7 +136,7 @@ public class PlotInfoHandler {
 					   
 							PlotPanel.addConnection(c);
 							firstTimeConnect = true;
-							System.out.println(dots[i] + " " + dots[j]);
+							//System.out.println(dots[i] + " " + dots[j]);
 							break;
 						}
 					}	

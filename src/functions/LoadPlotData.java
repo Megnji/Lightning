@@ -51,9 +51,6 @@ public class LoadPlotData {
 				}
 			}
 			
-			for (int i: _dotList){
-				System.out.print(i+ " ");
-			}
 			
 			PlotPanel.setDotList(_dotList,_maxIndex);
 			

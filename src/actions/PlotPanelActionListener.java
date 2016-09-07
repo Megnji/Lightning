@@ -3,11 +3,12 @@ package actions;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
 import uiElements.PlotPanel;
 
-public class PlotPanelActionListener implements MouseListener{
+public class PlotPanelActionListener implements MouseListener,MouseWheelListener{
 
 	private PlotPanel _panel;
 	public PlotPanelActionListener(PlotPanel panel){
@@ -16,19 +17,22 @@ public class PlotPanelActionListener implements MouseListener{
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println(e.getClickCount());
 		if (e.getClickCount() == 2){
-			if (PlotPanel.zoomin == true){
-				PlotPanel.zoomin = false;
+			int currentZoomRate = PlotPanel.getZoomRate();
+			if (currentZoomRate < 3){
+				currentZoomRate++;
+				PlotPanel.setZoomeRate(currentZoomRate);
+				System.out.println("Current zoom rate: "+ currentZoomRate);
 			}else{
-				PlotPanel.zoomin = true;
+				PlotPanel.resetZoomRate();
 			}
 			
 			_panel.repaint();
-			PlotPanel.changed = true;
+			
 		}else if (e.getClickCount() == 1){
 			Point p = e.getPoint();
 			System.out.println(PlotPanel.getClickInfo(p));
+			_panel.repaint();
 		}
 		
 	}
@@ -54,6 +58,11 @@ public class PlotPanelActionListener implements MouseListener{
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		// Need to add more
 		
 	}
 

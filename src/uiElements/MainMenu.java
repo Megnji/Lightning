@@ -5,12 +5,18 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import bean.Connection;
+import bean.Connection.ConnectionType;
+import bean.PointBean;
 import functions.PlotInfoHandler;
 
 public class MainMenu extends JMenuBar implements ActionListener{
@@ -31,6 +37,9 @@ public class MainMenu extends JMenuBar implements ActionListener{
 	public static String logicalQ = "";
 	public static String embeddings = "";
 	public static String [] embedding;
+	private static ArrayList<Integer> embedding2D = new ArrayList<Integer>();
+	private static ArrayList<Connection> connections = new ArrayList<Connection>();
+	public Connection t;
 	public MainMenu(){
 		super();
 		initialize();
@@ -62,15 +71,17 @@ public class MainMenu extends JMenuBar implements ActionListener{
 	    fileChooser = new JFileChooser();
 		}
 	public void actionPerformed(ActionEvent e){
+		
 		boolean emb = false;
 		if(e.getSource().equals(openItem)){
 			returnVal = fileChooser.showOpenDialog(null);
 			if(returnVal == JFileChooser.APPROVE_OPTION){
 				file = fileChooser.getSelectedFile();
-				fileName = file.getName();
 				InfoPanel.addFileName();
 				InfoPanel.addPhysicalQ();
 				InfoPanel.addLogicalQ();
+				fileName = file.getName();
+				if (fileName.contains(".out")){
 				try{
 					br =  new BufferedReader(new FileReader(file));
 					while((currentLine = br.readLine())!=null){
@@ -103,8 +114,47 @@ public class MainMenu extends JMenuBar implements ActionListener{
 				catch(Exception error){
 					error.printStackTrace();
 				}
-			}
+			}else if (fileName.contains(".alist")){
+				int count = -1;
+				try{
+					br =  new BufferedReader(new FileReader(file));
+					while((currentLine = br.readLine())!=null){
+						count++;
+						if (!currentLine.trim().equals(""))
+						{	
+						String[] numbers = currentLine.split(" ");
+						for (int i=0; i<numbers.length;i++){
+							int temp = Integer.parseInt(numbers[i]);
+							if (count > 0){
+								t = new Connection(count-1,temp);
+								connections.add(t);
+							}
+							if(!embedding2D.contains(temp))
+								embedding2D.add(temp);
+						}
+						
+						}
+					}
+						embedding2D.remove(0);
+						Collections.sort(embedding2D);
+						for (int i = 0;i<connections.size();i++)
+							for (int j=i+1;j<connections.size();j++){
+								if(Connection.sameAs(connections.get(i),connections.get(j)))
+									connections.remove(i);
+							}	
+					for (int i=0;i<connections.size();i++)
+						System.out.println(connections.get(i)._pa+ " "+connections.get(i)._pb+" | ");
+					PlotInfoHandler.updateConnection(embeddings);
+				
+				}
+				catch(Exception error){
+					error.printStackTrace();
+				}
+			}	
+			
 		}
+		}
+	
 	}
 	public String getFileName(){
 		return fileName;

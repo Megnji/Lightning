@@ -22,16 +22,17 @@ public class PlotPanel extends JPanel {
 	public static boolean showGrid = false;
 	public static boolean showOLine = false;
 	
-	public static boolean zoomin = false;
+	
 	public static boolean changed = false;
 	private static int _radiusOfDots = 4;
-	private static int _height = 800;
-	private static int _width = 800;
+//	private static int _height = 800;
+//	private static int _width = 800;
 	private static ArrayList<PointBean> _list = new ArrayList<PointBean>();
 	private static ArrayList<Integer> _listOfIndex = new ArrayList<Integer>();
 	private static int _maxIndex= 0;
 	private static ArrayList<Connection> _connections = new ArrayList<Connection>();
 	private static int _index = 0;
+	private static int _zoomRate = 1;
 	
 	/**
 	 * Create the panel.
@@ -42,17 +43,22 @@ public class PlotPanel extends JPanel {
 		setBorder(BorderFactory.createBevelBorder(1));
 	}
 	
+	/*
+	 * Add connection into plot panel
+	 */
 	public static void addConnection(Connection c){
 		for (Connection cp:_connections){
 			if ((c._pa == cp._pa && c._pb == cp._pb) || (c._pb == cp._pa && c._pa == cp._pb)){
 				cp._type = c._type;
 				cp._weight = c._weight;
+				cp._indexGroup = c._indexGroup;
 				return;
 			}
 		}
 		_connections.add(c);
 	}
 	
+	//determine whether the connection is already existed.
 	public static boolean connectionExist(Connection c){
 		for (Connection cp:_connections){
 			if ((c._pa == cp._pa && c._pb == cp._pb) || (c._pb == cp._pa && c._pa == cp._pb)){
@@ -62,12 +68,31 @@ public class PlotPanel extends JPanel {
 		return false;
 	}
 	
+	public static void showGroup(Connection c){
+		for (Connection c2: _connections){
+			if (c2._indexGroup == c._indexGroup && c2._indexGroup != -1){
+				System.out.println("TADA");
+				c2.isClicked = true;
+			}else{
+				c2.isClicked = false;
+			}
+		}
+	}
+	
 	public static String getClickInfo(Point p){
+		
+		if (_zoomRate != 1){
+			for (PointBean pb : _list){
+				pb._x = pb._x*_zoomRate;
+				pb._y = pb._y*_zoomRate;
+			}
+		}
 		String result = "";
+		double distance; 
 		for (PointBean pb : _list){
-				if (Math.abs(pb._x - p.x) < 12 && Math.abs(pb._y- p.y) < 12){
-					result = "Point clicked: "+pb._index+" "+pb._x+ " "+pb._y;
-					result = result+ "\n" + _list.size();
+				distance = Math.sqrt(Math.pow((pb._x +4 - p.x),2) + Math.pow((pb._y +4-p.y),2));
+				if (distance < 5){
+					result = "Point clicked: "+pb._index+" "+pb._x+ " "+pb._y +" "+p.x +" "+p.y + " with distance: "+ distance;
 					return result;
 				}
 
@@ -77,35 +102,69 @@ public class PlotPanel extends JPanel {
 			PointBean pa = _list.get(c._pa);
 			PointBean pb = _list.get(c._pb);
 			
-			if (pa._x == pb._x && pa._y<pb._y){ //Vertical line && pa at the top
-				if (Math.abs(pa._x - p.x) < 12 && p.y > pa._y && p.y < pb._y){
-					return "Line clicked:" +pa._index + " to " + pb._index;
+//			if (pa._x == pb._x && pa._y<pb._y){ //Vertical line && pa at the top
+//				if (Math.abs(pa._x - p.x) < 12 && p.y > pa._y && p.y < pb._y){
+//					showGroup(c);
+//					return "Line clicked:" +pa._index + " to " + pb._index;
+//				}
+//			}else if (pa._x == pb._x && pa._y>pb._y){ //Vertical line && pb at the top
+//				if (Math.abs(pa._x - p.x) < 12 && p.y <pa._y && p.y > pb._y){
+//					showGroup(c);
+//					return "Line clicked:" +pa._index + " to " + pb._index;
+//				}
+//			}else if (pa._y == pb._y && pa._x < pb._x){ //Horizontal line && pa at the left
+//				if (Math.abs(pa._y - p.y) < 12 && p.x >pa._x && p.x < pb._x){
+//					showGroup(c);
+//					return "Line clicked:" +pa._index + " to " + pb._index;
+//				}
+//			}else if (pa._y == pb._y && pa._x > pb._x){ //Horizontal line && pb at the left
+//				if (Math.abs(pa._y - p.y) < 12 && p.x < pa._x && p.x > pb._x){
+//					showGroup(c);
+//					return "Line clicked:" +pa._index + " to " + pb._index;
+//				}
+//			}else {
+				// The distance between the dot and the line of two points
+			    
+			    double x0,y0,x1,x2,y1,y2;
+			    x0 = (double)p.x;
+			    y0 = (double)p.y;
+			    x1 = (double)pa._x +4.0;
+			    y1 = (double)pa._y +4.0;
+			    x2 = (double)pb._x +4.0;
+			    y2 = (double)pb._y +4.0;
+			    distance = Math.abs((y2-y1)*x0 - (x2-x1) * y0 + x2*y1 - y2*x1) / 
+						Math.sqrt(Math.pow((y2 - y1),2) + Math.pow((x2-x1),2)); 
+			    if (x1 == x2 && (y0< Math.min(y1, y2)||y0> Math.max(y1, y2) )){
+			    	distance = 100;
+			    }else if (y1 == y2 && (x0 < Math.min(x1, x2)|| x0 > Math.max(x1, x2))){
+			    	distance = 100;
+			    }else if (x1 != x2 && y1 != y2 && (x0 < Math.min(x1, x2) || x0> Math.max(x1, x2)|| 
+			    		 y0 < Math.min(y1,y2) || y0> Math.max(y1, y2))){
+			    	distance = 100;
+			    }
+				
+				if (distance <= 5){
+					System.out.println(c._indexGroup);
+					showGroup(c);
+					return "Line clicked:" +pa._index + " to " + pb._index +" distance" + distance;
 				}
-			}else if (pa._x == pb._x && pa._y>pb._y){ //Vertical line && pb at the top
-				if (Math.abs(pa._x - p.x) < 12 && p.y <pa._y && p.y > pb._y){
-					return "Line clicked:" +pa._index + " to " + pb._index;
-				}
-			}else if (pa._y == pb._y && pa._x < pb._x){ //Horizontal line && pa at the left
-				if (Math.abs(pa._y - p.y) < 12 && p.x >pa._x && p.x < pb._x){
-					return "Line clicked:" +pa._index + " to " + pb._index;
-				}
-			}else if (pa._y == pb._y && pa._x > pb._x){ //Horizontal line && pb at the left
-				if (Math.abs(pa._y - p.y) < 12 && p.x < pa._x && p.x > pb._x){
-					return "Line clicked:" +pa._index + " to " + pb._index;
-				}
-			}
+//			}
 		}
-		return "Hahahahahah";
+		Connection temp = new Connection(0,0); //A temporary connection that reset the click state
+		showGroup(temp);
+		return "Nothing clicked";
 	}
 	
 	private void drawConnections(Graphics g){
 		for (Connection c:_connections){
-			if (c._type == ConnectionType.host){
-				g.setColor(Color.gray);
+			if (c.isClicked){
+				g.setColor(Color.RED);
+			}else if (c._type == ConnectionType.host){
+				g.setColor(Color.LIGHT_GRAY);
 			}else if(c._type == ConnectionType.embedding){
-				g.setColor(Color.red);
+				g.setColor(Color.BLUE);
 			}else {
-				g.setColor(Color.blue);
+				g.setColor(Color.magenta);
 			}
 			g.drawLine(_list.get(c._pa)._x+_radiusOfDots/2, _list.get(c._pa)._y+_radiusOfDots/2, 
 					_list.get(c._pb)._x+_radiusOfDots/2, _list.get(c._pb)._y+_radiusOfDots/2);
@@ -175,9 +234,13 @@ public class PlotPanel extends JPanel {
 	}
 	
 	private void drawPoint(Graphics g,int x, int y){
+		int actualRadius = _radiusOfDots;
+		
 		if (_listOfIndex.contains(_index)){
-			g.fillOval(x, y, _radiusOfDots, _radiusOfDots);
+			g.fillOval(x, y, actualRadius, actualRadius);
 			PointBean point = new PointBean(_index,x,y);
+			
+			point = new PointBean(_index,x,y);
 			_list.add(_index, point);
 		}else{
 			PointBean point = new PointBean(_index,0,0);
@@ -187,24 +250,21 @@ public class PlotPanel extends JPanel {
 		_index++;
 	}
 	
-	public void scale(){
-		
-		for (PointBean p : _list){
-			if (zoomin){
-				p._x = p._x *2;
-				p._y = p._y *2;
-			}else{
-				p._x = p._x /2;
-				p._y = p._y /2;
-			}
-
-		}
-		changed = false;
-	}
-	
 	public static void setDotList(ArrayList<Integer> l, int maxIndex){
 		_listOfIndex = l;
 		_maxIndex = maxIndex;
+	}
+	
+	public static void setZoomeRate(int rate){
+		_zoomRate = rate;
+	}
+	
+	public static int getZoomRate(){
+		return _zoomRate;
+	}
+	
+	public static void resetZoomRate(){
+		_zoomRate = 1;
 	}
 	
 	@Override
@@ -219,20 +279,20 @@ public class PlotPanel extends JPanel {
 			drawLines(g);
 		}
 		
-		if (zoomin){
-			Graphics2D g2 = (Graphics2D) g;
-			int scale = 2;
-			g2.scale(scale, scale);
-			
-		}
+
 
 		_index = 0;
 		_list.clear();
+		
+		if (_zoomRate != 1){
+
+			Graphics2D g2 = (Graphics2D) g;
+			g2.scale((double)_zoomRate, (double)_zoomRate);
+			
+		}
 		drawBoxs(g);
 		
 		drawConnections(g);
-		if (changed){
-			scale();
-		}
+
 	}
 }
