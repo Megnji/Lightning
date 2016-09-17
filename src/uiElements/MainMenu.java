@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -16,7 +14,6 @@ import javax.swing.JMenuItem;
 import bean.Connection;
 import functions.LoadAlist;
 import functions.LoadQUBO;
-import functions.PlotInfoHandler;
 
 public class MainMenu extends JMenuBar implements ActionListener{
 	
@@ -24,7 +21,7 @@ public class MainMenu extends JMenuBar implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 1521768584529278585L;
-	JMenuItem openItem;
+	private JMenuItem openItem,loadHost;
 	int returnVal;		
 	JFileChooser fileChooser;
 	File file;
@@ -36,8 +33,6 @@ public class MainMenu extends JMenuBar implements ActionListener{
 	public static String logicalQ = "";
 	public static String embeddings = "";
 	public static String [] embedding;
-	private static ArrayList<Integer> embedding2D = new ArrayList<Integer>();
-	private static ArrayList<Connection> connections = new ArrayList<Connection>();
 	public Connection t;
 	public MainMenu(){
 		super();
@@ -68,7 +63,9 @@ public class MainMenu extends JMenuBar implements ActionListener{
 		add(fileMenu);
 		add(helpMenu);
 	    fileChooser = new JFileChooser();
-		}
+	    File workingDirectory = new File(System.getProperty("user.dir"));
+	    fileChooser.setCurrentDirectory(workingDirectory);
+	}
 	
 
 	public void actionPerformed(ActionEvent e){
@@ -117,24 +114,37 @@ public class MainMenu extends JMenuBar implements ActionListener{
 				catch(Exception error){
 					error.printStackTrace();
 				}
-			}else if (fileName.contains(".alist")){
-				LoadAlist.loadAlistFile(file);
 			}else if (fileName.contains(".QUBO") || fileName.contains(".qubo")){
 				LoadQUBO.loadQUBOFile(file);
+				InfoPanel.setFileName(fileName);
+				InfoPanel.resetError();
+			}else {
+				MainFrame.showError("File type not supported, only .dwave or .QUBO file please");
 			}
-			InfoPanel.setFileName(fileName);
+			
 			
 			MainFrame.renewInfoPanel();
 			MainFrame.renewPlotPanel();
-		}
+			}
+		}else if (e.getSource().equals(loadHost)){
+			PlotPanel.resetStatus();
+			PlotPanel.resetZoomRate();
+			returnVal = fileChooser.showOpenDialog(null);
+			if(returnVal == JFileChooser.APPROVE_OPTION){
+				file = fileChooser.getSelectedFile();
+				fileName = file.getName();
+				if (fileName.contains(".alist")){
+					LoadAlist.loadAlistFile(file);
+				}else{
+					MainFrame.showError("File type not supported, only .alist file please");
+				}
+			}
 		}
 	
 	}
 	public String getFileName(){
 		return fileName;
 	}
-
-
-	}
+}
 	
 

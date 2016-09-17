@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.io.FileReader;
 
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
@@ -14,13 +13,13 @@ import javax.swing.JSplitPane;
 
 import actions.PlotPanelActionListener;
 import functions.LoadAlist;
-import functions.LoadPlotData;
 
 public class MainFrame {
 
-	private static JFrame frame;
+	private JFrame frame;
 	private static PlotPanel plotPanel;
 	private static InfoPanel infoPanel;
+	private static JScrollPane jsp;
 	/**
 	 * Launch the application.
 	 */
@@ -28,8 +27,8 @@ public class MainFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MainFrame window = new MainFrame();
-					window.frame.setVisible(true);
+					MainFrame f = new MainFrame();
+					f.frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -53,15 +52,16 @@ public class MainFrame {
 	private void initialize() {
 		frame = new JFrame();
 		infoPanel = new InfoPanel();
-		
+		infoPanel.setPreferredSize(new Dimension(500,800));
 		plotPanel = new PlotPanel();
 		MouseListener ml = new PlotPanelActionListener(plotPanel);
 		plotPanel.addMouseListener(ml);
-		plotPanel.setPreferredSize(new Dimension(1500,1500));
-		JScrollPane jsp = new JScrollPane(plotPanel);
-		
+		plotPanel.setPreferredSize(new Dimension(1200,1200));
+		jsp = new JScrollPane(plotPanel);
+		jsp.setMinimumSize(new Dimension(500,500));
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,jsp,infoPanel);
 		JMenuBar menuBar = new MainMenu();
+		
 		
 		frame.setJMenuBar(menuBar);
 		frame.add(sp);
@@ -70,12 +70,46 @@ public class MainFrame {
 		sp.setResizeWeight(0.5);
 	}
 	
+	public static double getVerPosition(){
+		double percentage = 0;
+		int current =jsp.getVerticalScrollBar().getValue();
+		int max = jsp.getVerticalScrollBar().getMaximum();
+		percentage = current / max;
+		return percentage;
+	}
+	
+	public static double getHonPosition(){
+		double percentage = 0;
+		int current =jsp.getHorizontalScrollBar().getValue();
+		int max = jsp.getHorizontalScrollBar().getMaximum();
+		percentage = current / max;
+		return percentage;
+	}
+	
+	public static void setScrollBar(double v, double h){
+		int vmax = jsp.getVerticalScrollBar().getMaximum();
+		int hmax = jsp.getHorizontalScrollBar().getMaximum();
+		int vAfter =  (int) v * vmax;
+		int hAfter = (int) h * hmax;
+		
+		jsp.getVerticalScrollBar().setValue(vAfter);
+		jsp.getHorizontalScrollBar().setValue(hAfter);
+		
+	}
+	
 	public static void renewPlotPanel(){
 		plotPanel.repaint();
+		jsp.repaint();
+		jsp.getVerticalScrollBar().repaint();
+		jsp.getHorizontalScrollBar().repaint();
 	}
 	
 	public static void renewInfoPanel(){
 		infoPanel.repaint();
+	}
+	
+	public static void showError(String error){
+		JOptionPane.showMessageDialog(plotPanel, error);
 	}
 	
 }

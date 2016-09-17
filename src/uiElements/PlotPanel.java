@@ -28,8 +28,6 @@ public class PlotPanel extends JPanel {
 	
 	private static boolean _draw = false;
 	private static int _radiusOfDots = 4;
-//	private static int _height = 800;
-//	private static int _width = 800;
 	private static ArrayList<PointBean> _list = new ArrayList<PointBean>();
 	private static ArrayList<Integer> _listOfIndex = new ArrayList<Integer>();
 	private static int _maxIndex= 0;
@@ -71,6 +69,10 @@ public class PlotPanel extends JPanel {
 		return false;
 	}
 	
+	
+	public static boolean dotExist(int index){
+		return _listOfIndex.contains(index);
+	}
 	public static void showGroup(Connection c){
 		int num = 0;
 		for (Connection c2: _connections){
@@ -344,7 +346,7 @@ public class PlotPanel extends JPanel {
 		_list.clear();
 		
 		if (_zoomRate != 1){
-			setPreferredSize(new Dimension(1500*_zoomRate,1500*_zoomRate));
+			setPreferredSize(new Dimension(1200*_zoomRate,1200*_zoomRate));
 			Graphics2D g2 = (Graphics2D) g;
 			g2.scale((double)_zoomRate, (double)_zoomRate);
 			

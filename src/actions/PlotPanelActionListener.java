@@ -19,8 +19,11 @@ public class PlotPanelActionListener implements MouseListener,MouseWheelListener
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2){
+			double h,v;
+			h = MainFrame.getHonPosition();
+			v = MainFrame.getVerPosition();
 			int currentZoomRate = PlotPanel.getZoomRate();
-			if (currentZoomRate < 3){
+			if (currentZoomRate < 5){
 				currentZoomRate++;
 				PlotPanel.setZoomeRate(currentZoomRate);
 				System.out.println("Current zoom rate: "+ currentZoomRate);
@@ -28,7 +31,7 @@ public class PlotPanelActionListener implements MouseListener,MouseWheelListener
 				PlotPanel.resetZoomRate();
 			}
 			_panel.repaint();
-			
+			MainFrame.setScrollBar(v, h);
 		}else if (e.getClickCount() == 1){
 			Point p = e.getPoint();
 			System.out.println(PlotPanel.getClickInfo(p));
@@ -63,8 +66,7 @@ public class PlotPanelActionListener implements MouseListener,MouseWheelListener
 	}
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		// Need to add more
-		
+
 	}
 
 

@@ -1,9 +1,12 @@
 package uiElements;
 
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -12,7 +15,7 @@ import javax.swing.JTextField;
 
 import bean.Connection.ConnectionType;
 
-public class InfoPanel extends JPanel implements ItemListener{
+public class InfoPanel extends JPanel implements ItemListener,ActionListener{
 	static JTextArea textAreaFN = new JTextArea("Default File");
 	/**
 	 * 
@@ -25,7 +28,9 @@ public class InfoPanel extends JPanel implements ItemListener{
 	
 	private static JLabel itemClicked;
 	private static JLabel label1,label2,label3,label4,label5,errorMsg;
+	private static JLabel hostLabel;
 	
+	private static JButton zoomin,zoomout;
 	private static JCheckBox box1, box2;
 	
 	/**
@@ -56,8 +61,8 @@ public class InfoPanel extends JPanel implements ItemListener{
 
 	
 	private void initialize(){
-		JLabel infoLabel = new JLabel("Information");
-		infoLabel.setBounds(60, 10, 120, 14);
+		JLabel infoLabel = new JLabel("Embedding Information");
+		infoLabel.setBounds(100, 10, 200, 14);
 		setLayout(null);
 		add(infoLabel);
 		
@@ -77,7 +82,7 @@ public class InfoPanel extends JPanel implements ItemListener{
 		lblEdgesShown.setBounds(27, 94, 129, 14);
 		add(lblEdgesShown);
 		
-		JLabel lblGraphOrder = new JLabel("Graph Order");
+		JLabel lblGraphOrder = new JLabel("Max chain size");
 		lblGraphOrder.setBounds(27, 130, 129, 14);
 		add(lblGraphOrder);
 		
@@ -111,6 +116,14 @@ public class InfoPanel extends JPanel implements ItemListener{
 		textEdgesShown.setEditable(false);
 		textGraphOrder.setEditable(false);
 		
+		JLabel hostInfo = new JLabel("Host information");
+		hostInfo.setBounds(100,190,150,20);
+		add(hostInfo);
+		
+		hostLabel = new JLabel("L = 4  M = 12  N = 12");
+		hostLabel.setBounds(27,210,200,20);
+		add(hostLabel);
+		
 		itemClicked = new JLabel("No item clicked");
 		itemClicked.setBounds(60, 300, 150, 24);
 		add(itemClicked);
@@ -136,7 +149,7 @@ public class InfoPanel extends JPanel implements ItemListener{
 		add(label5);
 		
 		errorMsg = new JLabel("");
-		errorMsg.setBounds(27, 480, 300,24);
+		errorMsg.setBounds(27, 480, 400,100);
 		add(errorMsg);
 		
 		box1 = new JCheckBox("Show Faulty qubits");
@@ -148,8 +161,21 @@ public class InfoPanel extends JPanel implements ItemListener{
 		box2.addItemListener(this);
 		add(box2);
 		
+		zoomin = new JButton("Zoom in");
+		zoomin.setBounds(27, 480, 150, 30);
+		zoomin.addActionListener(this);
+		add(zoomin);
+		
+		zoomout = new JButton("Zoom out");
+		zoomout.setBounds(200, 480, 150, 30);
+		zoomout.setEnabled(false);
+		zoomout.addActionListener(this);
+		add(zoomout);
 	}
 	
+	public static void resetError(){
+		errorMsg.setText("");
+	}
 	public static void resetClick(){
 		itemClicked.setText("No item clicked");
 		label1.setText("");
@@ -209,7 +235,7 @@ public class InfoPanel extends JPanel implements ItemListener{
 	}
 	
 	public static void setErrorMsg(String error){
-		errorMsg.setText(error);
+		errorMsg.setText("<HTML>" + "Faulty qubits used : " +error + "</HTML>");
 	}
 	
 	public static void setFileName(String fname){
@@ -229,5 +255,41 @@ public class InfoPanel extends JPanel implements ItemListener{
 			MainFrame.renewPlotPanel();
 		}
 		
+	}
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == zoomin){
+			zoomout.setEnabled(true);
+			double h,v;
+			h = MainFrame.getHonPosition();
+			v = MainFrame.getVerPosition();
+			int currentZoomRate = PlotPanel.getZoomRate();
+			if (currentZoomRate < 5){
+				currentZoomRate++;
+				PlotPanel.setZoomeRate(currentZoomRate);
+				System.out.println("Current zoom rate: "+ currentZoomRate);
+			}
+			if (currentZoomRate == 5){
+				zoomin.setEnabled(false);
+			}
+			MainFrame.renewPlotPanel();
+			MainFrame.setScrollBar(v, h);
+		}else if (e.getSource() == zoomout){
+			double h,v;
+			h = MainFrame.getHonPosition();
+			v = MainFrame.getVerPosition();
+			int currentZoomRate = PlotPanel.getZoomRate();
+			if (currentZoomRate > 1){
+				zoomin.setEnabled(true);
+				currentZoomRate--;
+				PlotPanel.setZoomeRate(currentZoomRate);
+				System.out.println("Current zoom rate: "+ currentZoomRate);
+			}
+            if (currentZoomRate == 1){
+				zoomout.setEnabled(false);
+			}
+			MainFrame.renewPlotPanel();
+			MainFrame.setScrollBar(v, h);
+		}
 	}
 }

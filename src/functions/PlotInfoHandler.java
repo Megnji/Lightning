@@ -3,13 +3,11 @@ package functions;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 import bean.Connection;
 import bean.Connection.ConnectionType;
 import uiElements.InfoPanel;
-import uiElements.MainFrame;
 import uiElements.PlotPanel;
 
 public class PlotInfoHandler {
@@ -61,22 +59,28 @@ public class PlotInfoHandler {
 					randomConnection(numHolder[i],i);
 				}
 			    boolean allConnected = true;
+			    ArrayList<Integer> faultyQubits = new ArrayList<Integer>();
 				for (Connection c: setList){
 					if (!connectTwoSets(numHolder[c._pa-1],numHolder[c._pb-1])){
+						for (int j:numHolder[c._pa-1]){
+							if (!PlotPanel.dotExist(j) && !faultyQubits.contains(j) && j>-1){
+								faultyQubits.add(j);
+							}
+						}
+						for (int j:numHolder[c._pb-1]){
+							if (!PlotPanel.dotExist(j) && !faultyQubits.contains(j) && j>-1){
+								faultyQubits.add(j);
+							}
+						}
 						allConnected = false;
-						System.out.println("Error: Cannot connect set "+ c._pa +" and "+ c._pb);
-						for (int k : numHolder[c._pa -1]){
-							System.out.print(k + " ");
-						}
-						System.out.println("");
-						for (int l : numHolder[c._pb -1]){
-							System.out.print(l + " ");
-						}
-						System.out.println("");
 					}
 				}
 				if (!allConnected){
-					InfoPanel.setErrorMsg("Some fauly qubits has been used!");
+					String errorMsg = "";
+					for (int j:faultyQubits){
+						errorMsg = errorMsg + j+ " ";
+					}
+					InfoPanel.setErrorMsg(errorMsg);
 				}
 		        return list;
 		    }
