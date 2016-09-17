@@ -10,6 +10,7 @@ public class PointBean {
 	public int _x;
 	public int _y;
 	public int _index;
+	public boolean _valid = true;
 	
 	public PointBean(int index){
 		_index = index;

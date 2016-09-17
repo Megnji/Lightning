@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
@@ -15,8 +14,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 import bean.Connection;
-import bean.Connection.ConnectionType;
-import bean.PointBean;
+import functions.LoadAlist;
+import functions.LoadQUBO;
 import functions.PlotInfoHandler;
 
 public class MainMenu extends JMenuBar implements ActionListener{
@@ -70,10 +69,14 @@ public class MainMenu extends JMenuBar implements ActionListener{
 		add(helpMenu);
 	    fileChooser = new JFileChooser();
 		}
+	
+
 	public void actionPerformed(ActionEvent e){
 		
 		boolean emb = false;
 		if(e.getSource().equals(openItem)){
+			PlotPanel.resetStatus();
+			PlotPanel.resetZoomRate();
 			returnVal = fileChooser.showOpenDialog(null);
 			if(returnVal == JFileChooser.APPROVE_OPTION){
 				file = fileChooser.getSelectedFile();
@@ -109,49 +112,20 @@ public class MainMenu extends JMenuBar implements ActionListener{
 						
 					}
 			
-					PlotInfoHandler.updateConnection(embeddings);
+					//PlotInfoHandler.updateConnection(embeddings);
 				}
 				catch(Exception error){
 					error.printStackTrace();
 				}
 			}else if (fileName.contains(".alist")){
-				int count = -1;
-				try{
-					br =  new BufferedReader(new FileReader(file));
-					while((currentLine = br.readLine())!=null){
-						count++;
-						if (!currentLine.trim().equals(""))
-						{	
-						String[] numbers = currentLine.split(" ");
-						for (int i=0; i<numbers.length;i++){
-							int temp = Integer.parseInt(numbers[i]);
-							if (count > 0){
-								t = new Connection(count-1,temp);
-								connections.add(t);
-							}
-							if(!embedding2D.contains(temp))
-								embedding2D.add(temp);
-						}
-						
-						}
-					}
-						embedding2D.remove(0);
-						Collections.sort(embedding2D);
-						for (int i = 0;i<connections.size();i++)
-							for (int j=i+1;j<connections.size();j++){
-								if(Connection.sameAs(connections.get(i),connections.get(j)))
-									connections.remove(i);
-							}	
-					for (int i=0;i<connections.size();i++)
-						System.out.println(connections.get(i)._pa+ " "+connections.get(i)._pb+" | ");
-					PlotInfoHandler.updateConnection(embeddings);
-				
-				}
-				catch(Exception error){
-					error.printStackTrace();
-				}
-			}	
+				LoadAlist.loadAlistFile(file);
+			}else if (fileName.contains(".QUBO") || fileName.contains(".qubo")){
+				LoadQUBO.loadQUBOFile(file);
+			}
+			InfoPanel.setFileName(fileName);
 			
+			MainFrame.renewInfoPanel();
+			MainFrame.renewPlotPanel();
 		}
 		}
 	

@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
+import uiElements.MainFrame;
 import uiElements.PlotPanel;
 
 public class PlotPanelActionListener implements MouseListener,MouseWheelListener{
@@ -26,13 +27,13 @@ public class PlotPanelActionListener implements MouseListener,MouseWheelListener
 			}else{
 				PlotPanel.resetZoomRate();
 			}
-			
 			_panel.repaint();
 			
 		}else if (e.getClickCount() == 1){
 			Point p = e.getPoint();
 			System.out.println(PlotPanel.getClickInfo(p));
 			_panel.repaint();
+			MainFrame.renewInfoPanel();
 		}
 		
 	}

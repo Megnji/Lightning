@@ -83,6 +83,6 @@ public class LoadPlotData {
 				+ "[241, 246, 254], [244, 252], [435, 436], [439, 447], [503, 511], [506, 508], [490, 495], [491, 493], [473, 479], "
 				+ "[474, 477]])";
 		
-		PlotInfoHandler.updateConnection(str);
+		//PlotInfoHandler.updateConnection(str);
 	}
 }

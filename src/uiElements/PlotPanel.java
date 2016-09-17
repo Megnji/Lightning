@@ -1,6 +1,7 @@
 package uiElements;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -24,6 +25,8 @@ public class PlotPanel extends JPanel {
 	
 	
 	public static boolean changed = false;
+	
+	private static boolean _draw = false;
 	private static int _radiusOfDots = 4;
 //	private static int _height = 800;
 //	private static int _width = 800;
@@ -69,14 +72,29 @@ public class PlotPanel extends JPanel {
 	}
 	
 	public static void showGroup(Connection c){
+		int num = 0;
 		for (Connection c2: _connections){
 			if (c2._indexGroup == c._indexGroup && c2._indexGroup != -1){
-				System.out.println("TADA");
 				c2.isClicked = true;
+				num ++;
 			}else{
 				c2.isClicked = false;
 			}
 		}
+		
+		InfoPanel.setGroupNum(num);
+	}
+	
+
+	public static void loadConnections(ArrayList<Connection> list){
+
+		for (Connection c: _connections){
+			c._type = ConnectionType.host;
+		}
+		for (Connection c: list){
+			addConnection(c);
+		}
+		
 	}
 	
 	public static String getClickInfo(Point p){
@@ -92,6 +110,7 @@ public class PlotPanel extends JPanel {
 		for (PointBean pb : _list){
 				distance = Math.sqrt(Math.pow((pb._x +4 - p.x),2) + Math.pow((pb._y +4-p.y),2));
 				if (distance < 5){
+					InfoPanel.setClickInfo(pb._index);
 					result = "Point clicked: "+pb._index+" "+pb._x+ " "+pb._y +" "+p.x +" "+p.y + " with distance: "+ distance;
 					return result;
 				}
@@ -144,30 +163,45 @@ public class PlotPanel extends JPanel {
 			    }
 				
 				if (distance <= 5){
-					System.out.println(c._indexGroup);
 					showGroup(c);
+					if (c._type == ConnectionType.host && !_draw){
+						
+					}else{
+						InfoPanel.setClickInfo(pa._index, pb._index,c._type,c._weight);
+					}
 					return "Line clicked:" +pa._index + " to " + pb._index +" distance" + distance;
 				}
 //			}
 		}
 		Connection temp = new Connection(0,0); //A temporary connection that reset the click state
 		showGroup(temp);
+		InfoPanel.resetClick();
 		return "Nothing clicked";
+	}
+	
+	public static void setHostDraw(boolean draw){
+		_draw = draw;
 	}
 	
 	private void drawConnections(Graphics g){
 		for (Connection c:_connections){
 			if (c.isClicked){
 				g.setColor(Color.RED);
-			}else if (c._type == ConnectionType.host){
-				g.setColor(Color.LIGHT_GRAY);
 			}else if(c._type == ConnectionType.embedding){
 				g.setColor(Color.BLUE);
+			}else if (c._type == ConnectionType.Q){
+				g.setColor(Color.GREEN);
 			}else {
-				g.setColor(Color.magenta);
+				g.setColor(Color.lightGray);
 			}
-			g.drawLine(_list.get(c._pa)._x+_radiusOfDots/2, _list.get(c._pa)._y+_radiusOfDots/2, 
-					_list.get(c._pb)._x+_radiusOfDots/2, _list.get(c._pb)._y+_radiusOfDots/2);
+			
+			if (!_draw && c._type == ConnectionType.host){
+				//do nothing
+			}else{
+				g.drawLine(_list.get(c._pa)._x+_radiusOfDots/2, _list.get(c._pa)._y+_radiusOfDots/2, 
+						_list.get(c._pb)._x+_radiusOfDots/2, _list.get(c._pb)._y+_radiusOfDots/2);
+			}
+			
 		}
 	}
 	
@@ -250,6 +284,13 @@ public class PlotPanel extends JPanel {
 		_index++;
 	}
 	
+	public static void resetStatus(){
+		for (Connection c:_connections){
+			c._type = ConnectionType.host;
+			c._weight = 0;
+		}
+	}
+	
 	public static void setDotList(ArrayList<Integer> l, int maxIndex){
 		_listOfIndex = l;
 		_maxIndex = maxIndex;
@@ -266,7 +307,25 @@ public class PlotPanel extends JPanel {
 	public static void resetZoomRate(){
 		_zoomRate = 1;
 	}
-	
+	public void renewInfoPanel(){
+		ArrayList<Integer> list= new ArrayList<Integer>();
+		int num = 0;
+		for (Connection c: _connections){
+			if (c._type == ConnectionType.embedding || c._type == ConnectionType.Q){
+				if (!list.contains(c._pa)){
+					list.add(c._pa);
+				}
+				num ++;
+				if (!list.contains(c._pb)){
+					list.add(c._pb);
+				}
+			}
+
+		}
+		
+		InfoPanel.setEdges(num);
+		InfoPanel.setPhysicQubitNum(list.size());
+	}
 	@Override
 	protected void paintComponent(Graphics g){
 		super.paintComponent(g);
@@ -285,14 +344,16 @@ public class PlotPanel extends JPanel {
 		_list.clear();
 		
 		if (_zoomRate != 1){
-
+			setPreferredSize(new Dimension(1500*_zoomRate,1500*_zoomRate));
 			Graphics2D g2 = (Graphics2D) g;
 			g2.scale((double)_zoomRate, (double)_zoomRate);
 			
+		}else{
+			setPreferredSize(new Dimension(1500,1500));
 		}
 		drawBoxs(g);
 		
 		drawConnections(g);
-
+		renewInfoPanel();
 	}
 }
