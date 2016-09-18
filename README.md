@@ -3,18 +3,23 @@
 Software engineering part 4 project. Visualisation tool for quantum computing result.
 
 Introduction
+
+
 This project lightening is a software tool been developed using JAVA. The purpose of this project is to provide the visualization functions of graph minor embedding algorithms implied in D-Wave quantum computing system. The software displays the graph of the input file on the left panel and basic information about the graph on the right panel. The left panel allows the users to view the graph in different ways and some interactions can be involved. There is also a drop down menu at the top of the two panel which is used for file processing.
 
 Requirements
+
 Input file must be correct format, please see MWISexample.dwave, MWISexample.QUBO, dw2x.alist for standard input file.
 
 .alist file should be load by load hold function
 .dwave / .QUBO files should be open by open function
 
 Installation
+
 Ensure you have Java7 environment running on your system, open the Lightning.jar file directly
 
 Functions and operations	
+
 Use Open File function to choose an input file (.dwave / .QUBO) from the local directory.
 Use load host function to choose an host file (.alist) from the local directory.
 The left panel will show the graph of the input file after loading. 
@@ -27,6 +32,7 @@ Grey Line: the host connections in the system.
 Red Line: the chosen edge by the user. (Turning red when clicked)
 
 Further development
+
 For the visualization part, a smarter scaler can be added to the zoom in and zoom out function to allow the user to see the graph in a more specific way. The size of the total qubits of the D-Wave system is growing due to the development of the quantum computer; the graph size may  also  increase so the plotting function also needs to be scaled up in the future.  
 
 Modification function should allow user to adjust the algorithm while using Lightning. In the condition of clicking one point, Lightning should show possible solutions for minor embedding. This is designed to be “drag and release” operation mode, which increase the ease of operation. The brief structure of program should remain unchanged after add this function. This is under the consideration about unity of user interface between different versions of software.
