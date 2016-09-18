@@ -1,7 +1,9 @@
 package uiElements;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -27,7 +29,7 @@ public class PlotPanel extends JPanel {
 	public static boolean changed = false;
 	
 	private static boolean _draw = false;
-	private static int _radiusOfDots = 4;
+	private static int _radiusOfDots = 8;
 	private static ArrayList<PointBean> _list = new ArrayList<PointBean>();
 	private static ArrayList<Integer> _listOfIndex = new ArrayList<Integer>();
 	private static int _maxIndex= 0;
@@ -271,9 +273,12 @@ public class PlotPanel extends JPanel {
 	
 	private void drawPoint(Graphics g,int x, int y){
 		int actualRadius = _radiusOfDots;
-		
+		Graphics2D g2d = (Graphics2D) g;
 		if (_listOfIndex.contains(_index)){
-			g.fillOval(x, y, actualRadius, actualRadius);
+			g2d.setFont(new Font("TimesRoman", Font.PLAIN, 3)); 
+			g2d.setStroke(new BasicStroke(0.3f));
+			g2d.drawOval(x, y, actualRadius, actualRadius);
+			g2d.drawString(Integer.toString(_index), x+1, y+5);
 			PointBean point = new PointBean(_index,x,y);
 			
 			point = new PointBean(_index,x,y);
@@ -354,8 +359,9 @@ public class PlotPanel extends JPanel {
 			setPreferredSize(new Dimension(1500,1500));
 		}
 		drawBoxs(g);
-		
 		drawConnections(g);
+		
+		
 		renewInfoPanel();
 	}
 }
