@@ -10,7 +10,11 @@ import bean.Connection;
 import bean.PointBean;
 import uiElements.PlotPanel;
 
-
+/**
+ * Disposed class, used to load .out file, no longer supported
+ * @author Zhe WEN
+ *
+ */
 public class LoadPlotData {
 	private static List<Integer> _dots = new ArrayList<Integer>();
 	private static ArrayList<Integer> _dotList = new ArrayList<Integer>();

@@ -9,6 +9,11 @@ import java.io.IOException;
 import bean.Connection;
 import uiElements.PlotPanel;
 
+/**
+ * The functions of load .dwave files
+ * @author Zhe WEN
+ *
+ */
 public class LoadIsing {
 	
 	public static void loadQUBOFile(File file){

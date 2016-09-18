@@ -9,6 +9,11 @@ import java.awt.event.MouseWheelListener;
 import uiElements.MainFrame;
 import uiElements.PlotPanel;
 
+/**
+ * Detect click actions happens on plot panel
+ * @author Zhe WEN
+ *
+ */
 public class PlotPanelActionListener implements MouseListener,MouseWheelListener{
 
 	private PlotPanel _panel;
@@ -16,6 +21,7 @@ public class PlotPanelActionListener implements MouseListener,MouseWheelListener
 		super();
 		_panel = panel;
 	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2){
@@ -64,6 +70,10 @@ public class PlotPanelActionListener implements MouseListener,MouseWheelListener
 		// TODO Auto-generated method stub
 		
 	}
+	
+	/**
+	 * This method should be implemented in further development to allow more actions.
+	 */
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 

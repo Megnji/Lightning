@@ -1,5 +1,10 @@
 package bean;
 
+/**
+ * Jave bean to hold the connection information
+ * @author Zhe WEN
+ *
+ */
 public class Connection {
 
 	//index of point a

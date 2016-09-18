@@ -10,6 +10,11 @@ import bean.Connection.ConnectionType;
 import uiElements.InfoPanel;
 import uiElements.PlotPanel;
 
+/**
+ * Helping class of LoadQUBO
+ * @author Zhe WEN
+ *
+ */
 public class PlotInfoHandler {
 
 	public static void updateConnection(String info, ArrayList<Connection> setList){

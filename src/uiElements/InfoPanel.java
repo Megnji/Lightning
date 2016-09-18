@@ -15,6 +15,11 @@ import javax.swing.JTextField;
 
 import bean.Connection.ConnectionType;
 
+/**
+ * Right panel that used to display the informations
+ * @author Yuankai WANG
+ *
+ */
 public class InfoPanel extends JPanel implements ItemListener,ActionListener{
 	static JTextArea textAreaFN = new JTextArea("Default File");
 	/**

@@ -15,6 +15,11 @@ import bean.Connection;
 import functions.LoadAlist;
 import functions.LoadQUBO;
 
+/**
+ * Top menu
+ * @author Yuankai WANG
+ *
+ */
 public class MainMenu extends JMenuBar implements ActionListener{
 	
 	/**
@@ -67,7 +72,9 @@ public class MainMenu extends JMenuBar implements ActionListener{
 	    fileChooser.setCurrentDirectory(workingDirectory);
 	}
 	
-
+	/**
+	 * Actions taken upon click menu items
+	 */
 	public void actionPerformed(ActionEvent e){
 		
 		boolean emb = false;

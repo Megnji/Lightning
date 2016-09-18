@@ -10,6 +10,11 @@ import bean.Connection;
 import uiElements.MainFrame;
 import uiElements.PlotPanel;
 
+/**
+ * Handle the load of .alist files
+ * @author Zhe WEN
+ *
+ */
 public class LoadAlist {
 
 	public static void loadAlistFile(File file){

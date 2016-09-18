@@ -16,6 +16,10 @@ import bean.Connection;
 import bean.Connection.ConnectionType;
 import bean.PointBean;
 
+/**
+ * Left panel that used to display Chimera graph and embedding information
+ * Author : Zhe WEN
+ */
 public class PlotPanel extends JPanel {
 
 	/**
@@ -28,13 +32,18 @@ public class PlotPanel extends JPanel {
 	
 	public static boolean changed = false;
 	
+	//Variable to control the display of host graph
 	private static boolean _draw = false;
 	private static int _radiusOfDots = 8;
+	//All positions of the points, including the faulty qubits (at location (0,0))
 	private static ArrayList<PointBean> _list = new ArrayList<PointBean>();
+	//All active qubits' index
 	private static ArrayList<Integer> _listOfIndex = new ArrayList<Integer>();
 	private static int _maxIndex= 0;
+	//All connection between qubits, the coordinate is based on left-up point of the acutal graph
 	private static ArrayList<Connection> _connections = new ArrayList<Connection>();
 	private static int _index = 0;
+	//Zoom rate
 	private static int _zoomRate = 1;
 	
 	/**
@@ -71,10 +80,16 @@ public class PlotPanel extends JPanel {
 		return false;
 	}
 	
-	
+	/*
+	 * Return true if a qubit is active qubit
+	 */
 	public static boolean dotExist(int index){
 		return _listOfIndex.contains(index);
 	}
+	
+	/*
+	 * Display the whole set of connections that belongs to one group
+	 */
 	public static void showGroup(Connection c){
 		int num = 0;
 		for (Connection c2: _connections){
@@ -90,6 +105,9 @@ public class PlotPanel extends JPanel {
 	}
 	
 
+	/*
+	 * Add a set of connections
+	 */
 	public static void loadConnections(ArrayList<Connection> list){
 
 		for (Connection c: _connections){
@@ -101,19 +119,32 @@ public class PlotPanel extends JPanel {
 		
 	}
 	
+	/**
+	 * Get the information at point p
+	 * @param p : clicked position
+	 * @return a string that contains click information
+	 */
 	public static String getClickInfo(Point p){
 		
+		System.out.println("Zoom rate:"+ _zoomRate + "Clicked:" +p.toString());
+		
+		int offset = 4;
 		if (_zoomRate != 1){
 			for (PointBean pb : _list){
 				pb._x = pb._x*_zoomRate;
 				pb._y = pb._y*_zoomRate;
 			}
+			offset = offset * _zoomRate;
 		}
+		PointBean tempP = _list.get(0);
+		System.out.println("Point " + _list.get(0)._index + ":" + _list.get(0)._x + ' '+ _list.get(0)._y);
 		String result = "";
 		double distance; 
+		distance = Math.sqrt(Math.pow((tempP._x +offset - p.x),2) + Math.pow((tempP._y +offset-p.y),2));
+		System.out.println("distance : " + distance + " offset: "+ offset);
 		for (PointBean pb : _list){
-				distance = Math.sqrt(Math.pow((pb._x +4 - p.x),2) + Math.pow((pb._y +4-p.y),2));
-				if (distance < 5){
+				distance = Math.sqrt(Math.pow((pb._x +offset - p.x),2) + Math.pow((pb._y +offset-p.y),2));
+				if (distance <= offset){
 					InfoPanel.setClickInfo(pb._index);
 					result = "Point clicked: "+pb._index+" "+pb._x+ " "+pb._y +" "+p.x +" "+p.y + " with distance: "+ distance;
 					return result;
@@ -151,10 +182,10 @@ public class PlotPanel extends JPanel {
 			    double x0,y0,x1,x2,y1,y2;
 			    x0 = (double)p.x;
 			    y0 = (double)p.y;
-			    x1 = (double)pa._x +4.0;
-			    y1 = (double)pa._y +4.0;
-			    x2 = (double)pb._x +4.0;
-			    y2 = (double)pb._y +4.0;
+			    x1 = (double)pa._x +offset;
+			    y1 = (double)pa._y +offset;
+			    x2 = (double)pb._x +offset;
+			    y2 = (double)pb._y +offset;
 			    distance = Math.abs((y2-y1)*x0 - (x2-x1) * y0 + x2*y1 - y2*x1) / 
 						Math.sqrt(Math.pow((y2 - y1),2) + Math.pow((x2-x1),2)); 
 			    if (x1 == x2 && (y0< Math.min(y1, y2)||y0> Math.max(y1, y2) )){
@@ -183,6 +214,10 @@ public class PlotPanel extends JPanel {
 		return "Nothing clicked";
 	}
 	
+	/**
+	 * Set whether the host graph should be draw
+	 * @param draw : boolean value
+	 */
 	public static void setHostDraw(boolean draw){
 		_draw = draw;
 	}
@@ -209,6 +244,10 @@ public class PlotPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Disposed function, could be used to draw background grids
+	 * @param g : Graphics
+	 */
 	private void drawGrid(Graphics g){
 		Graphics2D g2d = (Graphics2D)g.create();
 		
@@ -225,6 +264,10 @@ public class PlotPanel extends JPanel {
 		g2d.dispose();
 	}
 	
+	/**
+	 * Draw the set of qubits
+	 * @param g
+	 */
 	private void drawBoxs(Graphics g){
 		int size = (int)Math.ceil(Math.sqrt(_maxIndex / 8));
 		for (int i=0; i<size * 100; i+=100){
@@ -235,6 +278,12 @@ public class PlotPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Draw the qubits within one set
+	 * @param g
+	 * @param x : start x position of the set
+	 * @param y : start y position of the set
+	 */
 	private void drawBox(Graphics g,int x,int y){
 		drawPoint(g,x+50,y+30);
 		drawPoint(g,x+50,y+40);
@@ -246,6 +295,10 @@ public class PlotPanel extends JPanel {
 		drawPoint(g,x+70,y+50);
 	}
 	
+	/**
+	 * Draw host graph within one set of qubits, disposed
+	 * @param g
+	 */
 	private void drawLines(Graphics g){
 		for (int i=0; i<_list.size(); i++){
 			int index = _list.get(i)._index;
@@ -258,6 +311,12 @@ public class PlotPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Connect two qubit
+	 * @param g
+	 * @param a : index of first qubit
+	 * @param b : index of second qubit
+	 */
 	private void connectTwoPoints(Graphics g,int a,int b){
 		int xa=0,xb=0,ya=0,yb=0;
 				xa = _list.get(a)._x+_radiusOfDots/2;
@@ -271,6 +330,12 @@ public class PlotPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Draw a qubit with its number
+	 * @param g
+	 * @param x
+	 * @param y
+	 */
 	private void drawPoint(Graphics g,int x, int y){
 		int actualRadius = _radiusOfDots;
 		Graphics2D g2d = (Graphics2D) g;
@@ -291,6 +356,9 @@ public class PlotPanel extends JPanel {
 		_index++;
 	}
 	
+	/**
+	 * Set status of all connection to host, should be used on reloading embedding file
+	 */
 	public static void resetStatus(){
 		for (Connection c:_connections){
 			c._type = ConnectionType.host;
@@ -298,19 +366,35 @@ public class PlotPanel extends JPanel {
 		}
 	}
 	
+	/**
+	 * Set active set of qubits, should be used upon change host graph
+	 * @param l
+	 * @param maxIndex
+	 */
 	public static void setDotList(ArrayList<Integer> l, int maxIndex){
 		_listOfIndex = l;
 		_maxIndex = maxIndex;
 	}
 	
+	/**
+	 * Set zoom rate of the plot panel
+	 * @param rate
+	 */
 	public static void setZoomeRate(int rate){
 		_zoomRate = rate;
 	}
 	
+	/**
+	 * Get zoom rate
+	 * @return int: zoom rate
+	 */
 	public static int getZoomRate(){
 		return _zoomRate;
 	}
 	
+	/**
+	 * Reset zoom rate to 1
+	 */
 	public static void resetZoomRate(){
 		_zoomRate = 1;
 	}

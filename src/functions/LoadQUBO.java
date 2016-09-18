@@ -9,6 +9,11 @@ import java.util.ArrayList;
 
 import bean.Connection;
 
+/**
+ * Used to handle the load of .QUBO files
+ * @author Zhe WEN
+ *
+ */
 public class LoadQUBO {
 	
 	public static void loadQUBOFile(File file){
