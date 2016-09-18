@@ -50,19 +50,25 @@ public class MainMenu extends JMenuBar implements ActionListener{
 		JMenuItem newItem = new JMenuItem("new");
 		openItem = new JMenuItem("open..");
 		openItem.addActionListener(this);
+		loadHost = new JMenuItem("Load Host..");
+		loadHost.addActionListener(this);
 		JMenuItem saveItem = new JMenuItem("save");
 		JMenuItem saveAsItem = new JMenuItem("save as..");
-		
+		saveItem.setEnabled(false);
+		saveAsItem.setEnabled(false);
+		newItem.setEnabled(false);
 		fileMenu.add(newItem);
 		fileMenu.addSeparator();
 		
+		
 		fileMenu.add(openItem);
+		fileMenu.add(loadHost);
 		fileMenu.add(saveItem);
 		fileMenu.add(saveAsItem);
 		
 		JMenu helpMenu = new JMenu("Help");
 		JMenuItem aboutItem = new JMenuItem("About");
-		
+		aboutItem.setEnabled(false);
 		helpMenu.add(aboutItem);
 		
 		add(fileMenu);
